@@ -61,24 +61,42 @@ class ChirpController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Chirp $chirp)
     {
-        //
+        return view("chirps.edit", compact("chirp"));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Chirp $chirp)
     {
-        //
+        // Validate the request
+        $validated = $request->validate(
+            [
+                "message" => "required|string|max:255",
+            ],
+            [
+                // custom error message
+                "message.required" => "Please write something to chirp!",
+                "message.max" => "Chirps must be 255 characters or less.",
+            ],
+        );
+
+        // Update the chirp
+        $chirp->update($validated);
+
+        return redirect("/")->with("success", "Your chirp has been updated!");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Chirp $chirp)
     {
-        //
+        // Delete the chirp
+        $chirp->delete();
+
+        return redirect("/")->with("success", "Your chirp has been deleted!");
     }
 }
